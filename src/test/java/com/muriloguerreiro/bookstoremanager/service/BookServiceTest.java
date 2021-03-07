@@ -4,13 +4,10 @@ import com.muriloguerreiro.bookstoremanager.dto.BookDTO;
 import com.muriloguerreiro.bookstoremanager.entity.Book;
 import com.muriloguerreiro.bookstoremanager.exception.BookNotFoundException;
 import com.muriloguerreiro.bookstoremanager.repository.BookRepository;
-import com.muriloguerreiro.bookstoremanager.utils.BookUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -39,5 +36,15 @@ public class BookServiceTest {
         assertEquals(expectedFoundBook.getName(), bookDTO.getName());
         assertEquals(expectedFoundBook.getIsbn(), bookDTO.getIsbn());
         assertEquals(expectedFoundBook.getPublisherName(), bookDTO.getPublisherName());
+    }
+
+    @Test
+    void whenGivenUnexistingIdThenThrowAnException() {
+        var invalidId = 10L;
+
+        when(bookRepository.findById(invalidId))
+                .thenReturn(Optional.ofNullable(any(Book.class)));
+
+        assertThrows(BookNotFoundException.class, () -> bookService.findById(invalidId));
     }
 }
